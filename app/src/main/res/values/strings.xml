@@ -3,4 +3,11 @@
     <string name="name">Name</string>
     <string name="search">Search</string>
     <string name="poke_api">Poke API</string>
+    <string name="number">Number</string>
+    <string name="weight">Weight</string>
+    <string name="height">Height</string>
+    <string name="base_xp">Base XP</string>
+    <string name="textview">TextView</string>
+    <string name="move">Move</string>
+    <string name="ability">Ability</string>
 </resources>
