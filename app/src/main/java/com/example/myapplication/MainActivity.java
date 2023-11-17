@@ -16,8 +16,12 @@ import com.androidnetworking.common.ANRequest;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONArrayRequestListener;
+import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.androidnetworking.interfaces.ParsedRequestListener;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.security.KeyPairGenerator;
 import java.util.LinkedList;
@@ -55,25 +59,21 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private void makeRequest(String pokemon){
+    private void makeRequest(String pokemon) {
         ANRequest req = AndroidNetworking.get("https://pokeapi.co/api/v2/pokemon/{pokemon}")
                 .addPathParameter(searchET.getText().toString().toLowerCase(), pokemon)
                 .setPriority(Priority.LOW)
                 .build();
         // Log.i("URL", "https://pokeapi.co/api/v2/pokemon/"+pokemon);
-        req.getAsObjectList(Pokemon.class, new ParsedRequestListener<List<Pokemon>>(){
+        req.getAsJSONArray(new JSONArrayRequestListener() {
             @Override
-            public void onResponse(List<Pokemon> pokemons) {
-                String TAG = "POKEMON";
-                Log.i(TAG, "userList size : " + pokemons.size());
-                for(Pokemon pokemon: pokemons){
-
-                }
+            public void onResponse(JSONArray pokemons) {
+                Log.i("Data Request", "Data received.");
             }
 
             @Override
             public void onError(ANError anError) {
-                Toast.makeText(getApplicationContext(),"Error on getting data ", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Error on getting data ", Toast.LENGTH_LONG).show();
             }
         });
     }
