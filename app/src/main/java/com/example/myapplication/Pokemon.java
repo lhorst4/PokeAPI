@@ -1,6 +1,6 @@
 package com.example.myapplication;
 
-public class Pokemon {
+public class Pokemon implements Comparable<Pokemon> {
     String name;
     int id;
     int weight;
@@ -45,5 +45,30 @@ public class Pokemon {
 
     public String getAbility() {
         return ability;
+    }
+
+    public String toString(){
+        return String.valueOf(id) + ": " + name;
+    }
+
+    @Override
+    public int compareTo(Pokemon o) {
+
+        if(o.getId() == this.getId()) {
+            return 0;
+        }else{
+            return 1;
+        }
+    }
+
+    @Override
+    public boolean equals(Object o){
+        Pokemon p = (Pokemon) o;
+
+        if(p.getId() == this.getId()){
+            return true;
+        }else{
+            return false;
+        }
     }
 }

@@ -5,9 +5,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,17 +18,13 @@ import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.ANRequest;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
-import com.androidnetworking.interfaces.JSONArrayRequestListener;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
-import com.androidnetworking.interfaces.ParsedRequestListener;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.security.KeyPairGenerator;
 import java.util.LinkedList;
-import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -53,11 +52,11 @@ public class MainActivity extends AppCompatActivity {
             }catch(Exception e){
                 Log.i("SearchType", "Name");
             }
-            makeRequest(pokemon);
+            makeRequest(pokemon, true);
         }
     };
 
-    private void makeRequest(String pokemon) {
+    private void makeRequest(String pokemon, boolean newEntry) {
         ANRequest req = AndroidNetworking.get("https://pokeapi.co/api/v2/pokemon/"+pokemon)
                 .setPriority(Priority.LOW).build();
 
@@ -93,6 +92,17 @@ public class MainActivity extends AppCompatActivity {
                     abilityTV.setText(ability);
                     moveTV.setText(move);
                     setImage(pokedexnum);
+
+                    Pokemon mon_to_add = new Pokemon(pokename, pokedexnum, pokeweight, pokeheight, basexp, move, ability);
+                    if(pokelist.contains(mon_to_add)){
+                        if(newEntry) {
+                            Toast.makeText(getApplicationContext(), "Pokemon already on list.", Toast.LENGTH_LONG).show();
+                        }
+                    }else{
+                        pokelist.add(mon_to_add);
+                        setAdapter();
+                    }
+
                 }catch(Exception e){
                     Log.i("Exception", "JSON error");
                 }
@@ -105,6 +115,15 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    AdapterView.OnItemClickListener selected = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            Pokemon p = pokelist.get(position);
+            int num = p.getId();
+            makeRequest(String.valueOf(num), false);
+        }
+    };
+
     Button searchBT;
     EditText searchET;
     ImageView pokeIV;
@@ -115,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
     TextView xpTV;
     TextView moveTV;
     TextView abilityTV;
+    ListView pokeLV;
     LinkedList<Pokemon> pokelist;
 
     @Override
@@ -136,9 +156,10 @@ public class MainActivity extends AppCompatActivity {
         xpTV = findViewById(R.id.xpTV);
         moveTV = findViewById(R.id.moveTV);
         abilityTV = findViewById(R.id.abilityTV);
-
+        pokeLV = findViewById(R.id.pokeLV);
         searchBT.setOnClickListener(searchListener);
-
+        pokeLV.setOnItemClickListener(selected);
+        setAdapter();
     }
     public void setImage(int pokedexnum){
         String pokedexnumstr = "";
@@ -157,5 +178,9 @@ public class MainActivity extends AppCompatActivity {
             String imageURL = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/"+pokedexnumstr+".png";
             Picasso.get().load(imageURL).into(pokeIV);
         }
+    }
+    public void setAdapter(){
+        ArrayAdapter<Pokemon> adapter = new ArrayAdapter<Pokemon>(this, android.R.layout.simple_list_item_1, pokelist);
+        pokeLV.setAdapter(adapter);
     }
 }
