@@ -65,9 +65,9 @@ public class MainActivity extends AppCompatActivity {
                 .setPriority(Priority.LOW)
                 .build();
         // Log.i("URL", "https://pokeapi.co/api/v2/pokemon/"+pokemon);
-        req.getAsJSONArray(new JSONArrayRequestListener() {
+        req.getAsJSONObject(new JSONObjectRequestListener() {
             @Override
-            public void onResponse(JSONArray pokemons) {
+            public void onResponse(JSONObject pokemons) {
                 Log.i("Data Request", "Data received.");
             }
 
